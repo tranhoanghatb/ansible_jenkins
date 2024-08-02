@@ -17,17 +17,8 @@
 
     - name: Create custom index.html
       copy:
-        dest: html/index.html
-        content: |
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <title>Welcome to Custom NGINX!</title>
-          </head>
-          <body>
-              <h1>Success! Custom NGINX server is running.</h1>
-          </body>
-          </html>
+        src: html/index.html
+        dest: /tmp/
 
     - name: Run NGINX Docker container
       community.docker.docker_container:
@@ -37,7 +28,7 @@
         ports:
           - "8080:80"
         volumes:
-          - html:/usr/share/nginx/html
+          - /tmp/html:/usr/share/nginx/html
 
     - name: Verify NGINX container is running
       community.docker.docker_container_info:
