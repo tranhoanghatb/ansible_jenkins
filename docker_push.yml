@@ -1,0 +1,27 @@
+---
+- name: Pull and Run Node.js Docker Container
+  hosts: all
+  become: yes  # Use this if you need to run commands as a sudo user
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Pull Node.js Docker image
+      community.docker.docker_image:
+        name: node
+        tag: latest
+        source: pull
+
+    - name: Run Node.js Docker container
+      community.docker.docker_container:
+        name: my_node_app
+        image: node:latest
+        state: started
+        ports:
+          - "3000:3000"
+        volumes:
+          - /path/to/your/node/app:/usr/src/app
+        command: node /usr/src/app/app.js
