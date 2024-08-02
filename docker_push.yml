@@ -41,5 +41,3 @@
         name: my_nginx
       register: nginx_container_info
 
-    - debug:
-        var: nginx_container_info
