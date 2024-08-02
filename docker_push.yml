@@ -1,5 +1,5 @@
 ---
-- name: Pull and Run Node.js Docker Container
+- name: Pull and Run Docker Container
   hosts: all
   become: yes  # Use this if you need to run commands as a sudo user
   tasks:
@@ -9,19 +9,16 @@
         state: present
       when: ansible_os_family == "Debian"
 
-    - name: Pull Node.js Docker image
+    - name: Pull Docker image
       community.docker.docker_image:
-        name: node
+        name: nginx
         tag: latest
         source: pull
 
-    - name: Run Node.js Docker container
+    - name: Run Docker container
       community.docker.docker_container:
-        name: my_node_app
-        image: node:latest
+        name: my_nginx
+        image: nginx:latest
         state: started
         ports:
-          - "3000:3000"
-        volumes:
-          - /path/to/your/node/app:/usr/src/app
-        command: node /usr/src/app/app.js
+          - "8080:80"
