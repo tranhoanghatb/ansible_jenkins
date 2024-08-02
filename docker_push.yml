@@ -24,7 +24,7 @@
     - name: Create custom index.html
       copy:
         src: html/index.html
-        dest: /tmp/
+        dest: /var/lib/html/index.html
 
     - name: Run NGINX Docker container
       community.docker.docker_container:
@@ -34,7 +34,7 @@
         ports:
           - "8080:80"
         volumes:
-          - /tmp/html:/usr/share/nginx/html
+          - /var/lib/html:/usr/share/nginx/html
 
     - name: Verify NGINX container is running
       community.docker.docker_container_info:
