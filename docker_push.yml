@@ -8,7 +8,13 @@
         name: docker.io
         state: present
       when: ansible_os_family == "Debian"
-
+      
+    - name: Stop and remove existing Docker container
+      community.docker.docker_container:
+        name: nginx
+        state: absent
+        force_kill: yes
+        
     - name: Pull NGINX Docker image
       community.docker.docker_image:
         name: nginx
