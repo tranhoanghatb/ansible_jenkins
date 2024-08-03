@@ -15,11 +15,7 @@
     #     chdir: /tmp
     
     - name: Commit the running container to a new image
-      community.docker.docker_image:
-        name: prod_nginx
-        tag: latest
-        container: prod_nginx
-        source: commit
+      command: docker commit prod_nginx prod_nginx:latest
 
     - name: Export the Docker image to a tar file
       command: docker save -o /tmp/prod_nginx.tar prod_nginx:latest
