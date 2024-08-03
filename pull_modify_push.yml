@@ -57,12 +57,15 @@
         regexp: 'Production'
         replace: 'Dev'
         backup: yes  # This will create a backup of the original file
-
-    - name: Create a new Docker image from the modified filesystem
+        
+    - name: Create a new Docker tar ball from the modified filesystem
       command: |
         cd /tmp/container_filesystem && \
-        tar -cf dev_nginx.tar . && \
-        docker import dev_nginx.tar dev_nginx:latest
+        tar -cf dev_nginx.tar . &&
+        
+    - name: Create a new Docker image from the modified filesystem
+      command: |
+        docker import /tmp/container_filesystem/dev_nginx.tar dev_nginx:latest
 
     - name: Clean up extracted files and tar archives on dev server
       file:
