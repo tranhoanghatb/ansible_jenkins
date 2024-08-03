@@ -1,0 +1,86 @@
+---
+- name: Pull, modify, and push Docker container between environments
+  hosts: production_server
+  become: yes  # Use this if you need to run commands as a sudo user
+  tasks:
+    - name: Ensure Docker is installed on production server
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Export running container's filesystem from production
+      command: docker export prod_nginx -o /tmp/prod_nginx.tar
+      args:
+        chdir: /tmp
+
+    - name: Copy the exported container tar to the local machine
+      fetch:
+        src: /tmp/prod_nginx.tar
+        dest: ./prod_nginx.tar
+        flat: yes
+
+    - name: Clean up the tar archive from the production server
+      file:
+        path: /tmp/prod_nginx.tar
+        state: absent
+
+- name: Modify and push Docker container to development server
+  hosts: dev_server
+  become: yes
+  tasks:
+    - name: Ensure Docker is installed on development server
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Copy the container tar to the development server
+      copy:
+        src: ./prod_nginx.tar
+        dest: /tmp/prod_nginx.tar
+
+    - name: Create a directory to extract the container's filesystem
+      file:
+        path: /tmp/container_filesystem
+        state: directory
+
+    - name: Extract the container filesystem
+      unarchive:
+        src: /tmp/prod_nginx.tar
+        dest: /tmp/container_filesystem/
+        remote_src: yes
+
+    - name: Modify a specific file inside the container filesystem
+      replace:
+        path: /tmp/container_filesystem//usr/share/nginx/html/index.html
+        regexp: 'Production'
+        replace: 'Dev'
+        backup: yes  # This will create a backup of the original file
+
+    - name: Create a new Docker image from the modified filesystem
+      command: |
+        cd /tmp/container_filesystem && \
+        tar -cf dev_nginx.tar . && \
+        docker import dev_nginx.tar dev_nginx:latest
+
+    - name: Clean up extracted files and tar archives on dev server
+      file:
+        path: /tmp/container_filesystem
+        state: absent
+        recurse: yes
+
+    - name: Run the new Docker container on the development server
+      community.docker.docker_container:
+        name: dev_nginx
+        image: dev_nginx:latest
+        state: started
+        ports:
+          - "8080:80"
+        restart_policy: always
+
+    - name: Verify the Docker container is running on the development server
+      community.docker.docker_container_info:
+        name: dev_nginx
+      register: dev_nginx_info
+
