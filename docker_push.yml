@@ -25,6 +25,7 @@
       copy:
         src: html/index.html
         dest: /var/lib/html/index.html
+        mode: '0644'
 
     - name: Run NGINX Docker container
       community.docker.docker_container:
@@ -33,8 +34,8 @@
         state: started
         ports:
           - "8080:80"
-        # volumes:
-        #   - /var/lib/html:/usr/share/nginx/html
+        volumes:
+          - /var/lib/html:/usr/share/nginx/html
 
     - name: Verify NGINX container is running
       community.docker.docker_container_info:
