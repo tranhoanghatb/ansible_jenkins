@@ -34,9 +34,18 @@
         state: started
         ports:
           - "8080:80"
-        command: "/bin/sh -c 'chmod -R 0755 /usr/share/nginx/html'"
+        # command: "/bin/sh -c 'chmod -R 0755 /usr/share/nginx/html'"
         volumes:
           - /var/lib/html:/usr/share/nginx/html
+          
+    - name: Set permissions on a folder
+      file:
+        path: /usr/share/nginx/html
+        owner: root
+        group: root
+        mode: '0755'
+        state: directory
+        recurse: no  # Apply permissions recursively to all files and directories          
 
     - name: Verify NGINX container is running
       community.docker.docker_container_info:
