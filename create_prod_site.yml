@@ -1,6 +1,6 @@
 ---
 - name: Pull and Modify NGINX Docker Site
-  hosts: all
+  hosts: production_server
   become: yes  # Use this if you need to run commands as a sudo user
   tasks:
     - name: Ensure Docker is installed
