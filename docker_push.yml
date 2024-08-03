@@ -34,7 +34,6 @@
         state: started
         ports:
           - "8080:80"
-        # command: "/bin/sh -c 'chmod -R 0755 /usr/share/nginx/html'"
         volumes:
           - /var/lib/html:/usr/share/nginx/html
           
