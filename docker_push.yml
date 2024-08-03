@@ -11,7 +11,7 @@
       
     - name: Stop and remove existing Docker container
       community.docker.docker_container:
-        name: my_nginx
+        name: prod_nginx
         state: absent
         force_kill: yes
         
@@ -29,7 +29,7 @@
 
     - name: Run NGINX Docker container
       community.docker.docker_container:
-        name: my_nginx
+        name: prod_nginx
         image: nginx:latest
         state: started
         ports:
@@ -48,6 +48,6 @@
 
     - name: Verify NGINX container is running
       community.docker.docker_container_info:
-        name: my_nginx
+        name: prod_nginx
       register: nginx_container_info
 
