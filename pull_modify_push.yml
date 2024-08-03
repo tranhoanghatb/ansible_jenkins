@@ -60,7 +60,7 @@
         
     - name: Create a new Docker tar ball from the modified filesystem
       archive:
-        path: /tmp/container_filesystem
+        path: /tmp/container_filesystem/*
         dest: /tmp/container_filesystem/dev_nginx.tar
         
     - name: Create a new Docker image from the modified filesystem
