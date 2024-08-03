@@ -67,11 +67,6 @@
       command: |
         docker import /tmp/container_filesystem/dev_nginx.tar dev_nginx:latest
 
-    - name: Clean up extracted files and tar archives on dev server
-      file:
-        path: /tmp/container_filesystem
-        state: absent
-        recurse: yes
 
     - name: Run the new Docker container on the development server
       community.docker.docker_container:
@@ -86,4 +81,10 @@
       community.docker.docker_container_info:
         name: dev_nginx
       register: dev_nginx_info
+      
+    - name: Clean up extracted files and tar archives on dev server
+      file:
+        path: /tmp/container_filesystem/
+        state: absent
+        recurse: yes
 
