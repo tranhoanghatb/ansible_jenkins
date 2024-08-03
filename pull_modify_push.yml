@@ -15,22 +15,33 @@
     - name: Export the Docker image to a tar file
       command: docker save -o /tmp/prod_nginx.tar prod_nginx:latest
     
-    - name: copy docker volume
+    - name: Archive docker volume
       archive:
         path: /var/lib/html/*
         dest: /tmp/prod_nginx_volume.tar
-     
+        
+     - name: Copy the volume tar to the local machine
+      fetch:
+        src: /tmp/prod_nginx_volume.tar
+        dest: /tmp/prod_nginx_volume.tar
+        flat: yes
+        
     - name: Copy the exported container tar to the local machine
       fetch:
         src: /tmp/prod_nginx.tar
         dest: /tmp/prod_nginx.tar
         flat: yes
 
-    - name: Clean up the tar archive from the production server
+    - name: Clean up the container tar archive from the production server
       file:
         path: /tmp/prod_nginx.tar
         state: absent
-
+        
+    - name: Clean up the volume tar archive from the production server
+      file:
+        path: /tmp/prod_nginx.tar
+        state: absent
+        
 - name: Modify and push Docker container to development server
   hosts: dev_server
   become: yes
