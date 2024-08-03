@@ -54,7 +54,7 @@
 
     - name: Modify a specific file inside the container filesystem
       replace:
-        path: /tmp/container_filesystem//usr/share/nginx/html/index.html
+        path: /tmp/container_filesystem/usr/share/nginx/html/index.html
         regexp: 'Production'
         replace: 'Dev'
         backup: yes  # This will create a backup of the original file
