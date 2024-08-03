@@ -39,7 +39,7 @@
         
 #     - name: Clean up the volume tar archive from the production server
 #       file:
-#         path: /tmp/prod_nginx.tar
+#         path: /tmp/prod_nginx_volume.tar
 #         state: absent
         
 - name: Modify and push Docker container to development server
@@ -106,9 +106,13 @@
         name: prod_nginx
       register: prod_nginx_info
       
-    - name: Clean up extracted files and tar archives on dev server
+    - name: Clean up the container tar archive from the production server
       file:
-        path: /tmp/container_filesystem/
+        path: /tmp/prod_nginx.tar
         state: absent
-        recurse: yes
+        
+    - name: Clean up the volume tar archive from the production server
+      file:
+        path: /tmp/prod_nginx_volume.tar
+        state: absent
 
