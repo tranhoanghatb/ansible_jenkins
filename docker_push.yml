@@ -23,7 +23,7 @@
 
     - name: Create custom index.html
       copy:
-        src: html/index.html
+        src: html/dev_index.html
         dest: /var/lib/html/index.html
         mode: '0644'
 
