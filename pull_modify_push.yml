@@ -88,7 +88,7 @@
             
     - name: Create a new Docker image from the modified filesystem
       command: |
-        docker load -i /tmp/container_filesystem/prod_nginx.tar
+        docker load -i /tmp/prod_nginx.tar
 
     - name: Run the new Docker container on the development server
       community.docker.docker_container:
