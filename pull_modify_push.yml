@@ -51,7 +51,13 @@
         name: docker.io
         state: present
       when: ansible_os_family == "Debian"
-
+      
+    - name: Create a volume mount directory
+      file:
+        path: /var/lib/html/
+        state: directory
+        mode: '0755'
+        
     - name: Copy the container tar to the development server
       copy:
         src: /tmp/prod_nginx.tar
