@@ -20,7 +20,7 @@
         path: /var/lib/html/*
         dest: /tmp/prod_nginx_volume.tar
         
-     - name: Copy the volume tar to the local machine
+    - name: Copy the volume tar to the local machine
       fetch:
         src: /tmp/prod_nginx_volume.tar
         dest: /tmp/prod_nginx_volume.tar
