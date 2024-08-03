@@ -1,62 +1,62 @@
 ---
-# - name: Pull, modify, and push Docker container between environments
-#   hosts: production_server
-#   become: yes  # Use this if you need to run commands as a sudo user
-#   tasks:
-#     - name: Ensure Docker is installed on production server
-#       apt:
-#         name: docker.io
-#         state: present
-#       when: ansible_os_family == "Debian"
+- name: Pull, modify, and push Docker container between environments
+  hosts: production_server
+  become: yes  # Use this if you need to run commands as a sudo user
+  tasks:
+    - name: Ensure Docker is installed on production server
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
 
-#     - name: Export running container's filesystem from production
-#       command: docker export prod_nginx -o /tmp/prod_nginx.tar
-#       args:
-#         chdir: /tmp
+    - name: Export running container's filesystem from production
+      command: docker export prod_nginx -o /tmp/prod_nginx.tar
+      args:
+        chdir: /tmp
 
-#     - name: Copy the exported container tar to the local machine
-#       fetch:
-#         src: /tmp/prod_nginx.tar
-#         dest: ./prod_nginx.tar
-#         flat: yes
+    - name: Copy the exported container tar to the local machine
+      fetch:
+        src: /tmp/prod_nginx.tar
+        dest: ./prod_nginx.tar
+        flat: yes
 
-#     - name: Clean up the tar archive from the production server
-#       file:
-#         path: /tmp/prod_nginx.tar
-#         state: absent
+    - name: Clean up the tar archive from the production server
+      file:
+        path: /tmp/prod_nginx.tar
+        state: absent
 
 - name: Modify and push Docker container to development server
   hosts: dev_server
   become: yes
   tasks:
-    # - name: Ensure Docker is installed on development server
-    #   apt:
-    #     name: docker.io
-    #     state: present
-    #   when: ansible_os_family == "Debian"
+    - name: Ensure Docker is installed on development server
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
 
-    # - name: Copy the container tar to the development server
-    #   copy:
-    #     src: ./prod_nginx.tar
-    #     dest: /tmp/prod_nginx.tar
+    - name: Copy the container tar to the development server
+      copy:
+        src: ./prod_nginx.tar
+        dest: /tmp/prod_nginx.tar
 
-    # - name: Create a directory to extract the container's filesystem
-    #   file:
-    #     path: /tmp/container_filesystem
-    #     state: directory
+    - name: Create a directory to extract the container's filesystem
+      file:
+        path: /tmp/container_filesystem
+        state: directory
 
-    # - name: Extract the container filesystem
-    #   unarchive:
-    #     src: /tmp/prod_nginx.tar
-    #     dest: /tmp/container_filesystem/
-    #     remote_src: yes
+    - name: Extract the container filesystem
+      unarchive:
+        src: /tmp/prod_nginx.tar
+        dest: /tmp/container_filesystem/
+        remote_src: yes
 
-    # - name: Modify a specific file inside the container filesystem
-    #   replace:
-    #     path: /tmp/container_filesystem//usr/share/nginx/html/index.html
-    #     regexp: 'Production'
-    #     replace: 'Dev'
-    #     backup: yes  # This will create a backup of the original file
+    - name: Modify a specific file inside the container filesystem
+      replace:
+        path: /tmp/container_filesystem//usr/share/nginx/html/index.html
+        regexp: 'Production'
+        replace: 'Dev'
+        backup: yes  # This will create a backup of the original file
         
     - name: Create a new Docker tar ball from the modified filesystem
       archive:
