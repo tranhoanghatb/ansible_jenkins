@@ -1,30 +1,35 @@
 ---
-# - name: Pull, modify, and push Docker container between environments
-#   hosts: production_server
-#   become: yes  # Use this if you need to run commands as a sudo user
-#   tasks:
-#     - name: Ensure Docker is installed on production server
-#       apt:
-#         name: docker.io
-#         state: present
-#       when: ansible_os_family == "Debian"
+- name: Pull, modify, and push Docker container between environments
+  hosts: production_server
+  become: yes  # Use this if you need to run commands as a sudo user
+  tasks:
+    - name: Ensure Docker is installed on production server
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
 
-#     - name: Commit the running container to a new image
-#       command: docker commit prod_nginx prod_nginx:latest
+    - name: Commit the running container to a new image
+      command: docker commit prod_nginx prod_nginx:latest
 
-#     - name: Export the Docker image to a tar file
-#       command: docker save -o /tmp/prod_nginx.tar prod_nginx:latest
-      
-#     - name: Copy the exported container tar to the local machine
-#       fetch:
-#         src: /tmp/prod_nginx.tar
-#         dest: ./prod_nginx.tar
-#         flat: yes
+    - name: Export the Docker image to a tar file
+      command: docker save -o /tmp/prod_nginx.tar prod_nginx:latest
+    
+    - name: copy docker volume
+      archive:
+        path: /var/lib/html/*
+        dest: /tmp/prod_nginx_volume.tar
+     
+    - name: Copy the exported container tar to the local machine
+      fetch:
+        src: /tmp/prod_nginx.tar
+        dest: /tmp/prod_nginx.tar
+        flat: yes
 
-#     - name: Clean up the tar archive from the production server
-#       file:
-#         path: /tmp/prod_nginx.tar
-#         state: absent
+    - name: Clean up the tar archive from the production server
+      file:
+        path: /tmp/prod_nginx.tar
+        state: absent
 
 - name: Modify and push Docker container to development server
   hosts: dev_server
@@ -38,50 +43,51 @@
 
     - name: Copy the container tar to the development server
       copy:
-        src: ./prod_nginx.tar
+        src: /tmp/prod_nginx.tar
         dest: /tmp/prod_nginx.tar
-
+        
+    - name: Copy the volume tar to the development server
+      copy:
+        src: /tmp/prod_nginx_volume.tar
+        dest: /tmp/prod_nginx_volume.tar
+        
     - name: Create a directory to extract the container's filesystem
       file:
         path: /tmp/container_filesystem
         state: directory
-
-    - name: Extract the container filesystem
+        
+    - name: Extract the container volume
       unarchive:
-        src: /tmp/prod_nginx.tar
-        dest: /tmp/container_filesystem/
+        src: /tmp/prod_nginx_volume.tar
+        dest: /var/lib/html
         remote_src: yes
-
+        
     - name: Modify a specific file inside the container filesystem
       replace:
-        path: /tmp/container_filesystem/usr/share/nginx/html/index.html
+        path: /var/lib/html/index.html
         regexp: 'Production'
         replace: 'Dev'
         backup: yes  # This will create a backup of the original file
-        
-    - name: Create a new Docker tar ball from the modified filesystem
-      archive:
-        path: /tmp/container_filesystem/*
-        dest: /tmp/container_filesystem/dev_nginx.tar
-        
+            
     - name: Create a new Docker image from the modified filesystem
       command: |
-        docker import /tmp/container_filesystem/dev_nginx.tar dev_nginx:latest
-
+        docker load -i /tmp/container_filesystem/prod_nginx.tar
 
     - name: Run the new Docker container on the development server
       community.docker.docker_container:
-        name: dev_nginx
-        image: dev_nginx:latest
+        name: prod_nginx
+        image: prod_nginx:latest
         state: started
         ports:
           - "8080:80"
+        volumes:
+          - /var/lib/html:/usr/share/nginx/html          
         restart_policy: always
 
     - name: Verify the Docker container is running on the development server
       community.docker.docker_container_info:
-        name: dev_nginx
-      register: dev_nginx_info
+        name: prod_nginx
+      register: prod_nginx_info
       
     - name: Clean up extracted files and tar archives on dev server
       file:
