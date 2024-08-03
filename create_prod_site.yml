@@ -9,11 +9,11 @@
         state: present
       when: ansible_os_family == "Debian"
       
-    - name: Stop and remove existing Docker container
-      community.docker.docker_container:
-        name: prod_nginx
-        state: absent
-        force_kill: yes
+    - name: Create a directory
+      file:
+        path: /var/lib/html/
+        state: directory
+        mode: '0755'
         
     - name: Pull NGINX Docker image
       community.docker.docker_image:
