@@ -1,2 +1,5 @@
-[all]
+[production_server]
 172.21.114.22
+
+[dev_server]
+172.21.114.21
