@@ -16,14 +16,14 @@ pipeline {
         stage('Create Production Site') {
             steps {
                 // Run Ansible Playbook
-                ansiblePlaybook become: true, becomeUser: 'administrator', credentialsId: 'administrator', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'create_prod_site.yml'
+                ansiblePlaybook become: true, becomeUser: 'root', credentialsId: 'administrator', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'create_prod_site.yml'
                 
             }
         }
         stage('Copy to Dev Site') {
             steps {
                 // Run Ansible Playbook
-                ansiblePlaybook become: true, becomeUser: 'administrator', credentialsId: 'administrator', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'pull_modify_push.yml'
+                ansiblePlaybook become: true, becomeUser: 'root', credentialsId: 'administrator', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'pull_modify_push.yml'
                 
             }
         }
