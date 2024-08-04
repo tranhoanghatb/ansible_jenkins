@@ -6,12 +6,12 @@ pipeline {
     
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout code from GitHub
-                git branch: 'main', url: 'https://github.com/tranhoanghatb/ansible_jenkins.git'
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         // Checkout code from GitHub
+        //         git branch: 'main', url: 'https://github.com/tranhoanghatb/ansible_jenkins.git'
+        //     }
+        // }
         
         stage('Update Production Site') {
             steps {
