@@ -15,12 +15,12 @@
     - name: Export the Docker image to a tar file
       command: docker save -o /tmp/prod_nginx.tar prod_nginx:latest
         
-    - name: Set read permissions on the Docker image tar file
-      file:
-        path: "{{ item }}"
-        mode: '0644'
-      with_fileglob:
-        - "/tmp/prod_nginx*.tar"
+    # - name: Set read permissions on the Docker image tar file
+    #   file:
+    #     path: "{{ item }}"
+    #     mode: '0644'
+    #   with_fileglob:
+    #     - "/tmp/prod_nginx*.tar"
         
     - name: Archive docker volume
       archive:
