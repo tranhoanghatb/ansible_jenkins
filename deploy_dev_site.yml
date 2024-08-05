@@ -8,10 +8,10 @@
         state: present
       when: ansible_os_family == "Debian"
       
-    - name: Stop and remove existing container if present
-      docker_container:
-        name: prod_nginx
-        state: absent       
+    # - name: Stop and remove existing container if present
+    #   docker_container:
+    #     name: prod_nginx
+    #     state: absent       
         
     - name: Create a volume mount directory
       file:
@@ -19,20 +19,20 @@
         state: directory
         mode: '0755'
         
-    - name: Copy the container tar to the development server
-      copy:
-        src: /tmp/prod_nginx.tar
-        dest: /tmp/prod_nginx.tar
+    # - name: Copy the container tar to the development server
+    #   copy:
+    #     src: /tmp/prod_nginx.tar
+    #     dest: /tmp/prod_nginx.tar
         
     - name: Copy the volume tar to the development server
       copy:
         src: /tmp/prod_nginx_volume.tar
         dest: /tmp/prod_nginx_volume.tar
         
-    - name: Create a directory to extract the container's filesystem
-      file:
-        path: /tmp/container_filesystem
-        state: directory
+    # - name: Create a directory to extract the container's filesystem
+    #   file:
+    #     path: /tmp/container_filesystem
+    #     state: directory
         
     - name: Extract the container volume
       unarchive:
@@ -47,30 +47,30 @@
         replace: 'Dev'
         backup: yes  # This will create a backup of the original file
             
-    - name: Create a new Docker image from the modified filesystem
-      command: |
-        docker load -i /tmp/prod_nginx.tar
+    # - name: Create a new Docker image from the modified filesystem
+    #   command: |
+    #     docker load -i /tmp/prod_nginx.tar
 
-    - name: Run the new Docker container on the development server
-      community.docker.docker_container:
-        name: prod_nginx
-        image: prod_nginx:latest
-        state: started
-        ports:
-          - "8080:80"
-        volumes:
-          - /var/lib/html:/usr/share/nginx/html          
-        restart_policy: always
+    # - name: Run the new Docker container on the development server
+    #   community.docker.docker_container:
+    #     name: prod_nginx
+    #     image: prod_nginx:latest
+    #     state: started
+    #     ports:
+    #       - "8080:80"
+    #     volumes:
+    #       - /var/lib/html:/usr/share/nginx/html          
+    #     restart_policy: always
 
     - name: Verify the Docker container is running on the development server
       community.docker.docker_container_info:
         name: prod_nginx
       register: prod_nginx_info
       
-    - name: Clean up the container tar archive from the production server
-      file:
-        path: /tmp/prod_nginx.tar
-        state: absent
+    # - name: Clean up the container tar archive from the production server
+    #   file:
+    #     path: /tmp/prod_nginx.tar
+    #     state: absent
         
     - name: Clean up the volume tar archive from the production server
       file:
