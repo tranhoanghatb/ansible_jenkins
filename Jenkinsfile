@@ -1,13 +1,13 @@
 pipeline {
     agent any
     stages {       
-        stage('Update Production Site') {
-            steps {
-                // Run Ansible Playbook
-                ansiblePlaybook become: true, becomeUser: 'root', credentialsId: 'administrator', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'create_prod_site.yml'
+        // stage('Update Production Site') {
+        //     steps {
+        //         // Run Ansible Playbook
+        //         ansiblePlaybook become: true, becomeUser: 'root', credentialsId: 'administrator', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'create_prod_site.yml'
                 
-            }
-        }
+        //     }
+        // }
         stage('Clone Production Site') {
             steps {
                 // Run Ansible Playbook
