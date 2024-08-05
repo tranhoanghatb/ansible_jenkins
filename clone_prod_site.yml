@@ -13,10 +13,15 @@
       command: docker commit prod_nginx prod_nginx:latest
 
     - name: Export the Docker image to a tar file
-      command: |
-        docker save -o /tmp/prod_nginx.tar prod_nginx:latest
-        chmod 644 /tmp/prod_nginx.tar
-    
+      command: docker save -o /tmp/prod_nginx.tar prod_nginx:latest
+        
+    - name: Set read permissions on the Docker image tar file
+      file:
+        path: /tmp/prod_nginx.tar
+        mode: '0644'
+        owner: root
+        group: root
+        
     - name: Archive docker volume
       archive:
         path: /var/lib/html/*
