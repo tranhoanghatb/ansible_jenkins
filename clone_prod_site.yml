@@ -3,17 +3,17 @@
   hosts: production_server
   become: yes  # Use this if you need to run commands as a sudo user
   tasks:
-    - name: Ensure Docker is installed on production server
-      apt:
-        name: docker.io
-        state: present
-      when: ansible_os_family == "Debian"
+    # - name: Ensure Docker is installed on production server
+    #   apt:
+    #     name: docker.io
+    #     state: present
+    #   when: ansible_os_family == "Debian"
 
-    - name: Commit the running container to a new image
-      command: docker commit prod_nginx prod_nginx:latest
+    # - name: Commit the running container to a new image
+    #   command: docker commit prod_nginx prod_nginx:latest
 
-    - name: Export the Docker image to a tar file
-      command: docker save -o /tmp/prod_nginx.tar prod_nginx:latest
+    # - name: Export the Docker image to a tar file
+    #   command: docker save -o /tmp/prod_nginx.tar prod_nginx:latest
         
     # - name: Set read permissions on the Docker image tar file
     #   file:
@@ -33,11 +33,11 @@
         dest: /tmp/prod_nginx_volume.tar
         flat: yes
         
-    - name: Copy the exported container tar to the local machine
-      fetch:
-        src: /tmp/prod_nginx.tar
-        dest: /tmp/prod_nginx.tar
-        flat: yes
+    # - name: Copy the exported container tar to the local machine
+    #   fetch:
+    #     src: /tmp/prod_nginx.tar
+    #     dest: /tmp/prod_nginx.tar
+    #     flat: yes
 
     - name: Clean up the container tar archive from the production server
       file:
