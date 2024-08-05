@@ -17,10 +17,10 @@
         
     - name: Set read permissions on the Docker image tar file
       file:
-        path: /tmp/prod_nginx*.tar
+        path: "{{ item }}"
         mode: '0644'
-        owner: root
-        group: root
+      with_fileglob:
+        - "/tmp/prod_nginx*.tar"
         
     - name: Archive docker volume
       archive:
@@ -41,10 +41,12 @@
 
     - name: Clean up the container tar archive from the production server
       file:
-        path: /tmp/prod_nginx.tar
+        path: "{{ item }}"
         state: absent
+      with_fileglob:
+        - "/tmp/prod_nginx*.tar"
         
-    - name: Clean up the volume tar archive from the production server
-      file:
-        path: /tmp/prod_nginx_volume.tar
-        state: absent
+    # - name: Clean up the volume tar archive from the production server
+    #   file:
+    #     path: /tmp/prod_nginx_volume.tar
+    #     state: absent
