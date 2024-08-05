@@ -1,18 +1,6 @@
 pipeline {
     agent any
-    
-    // triggers {
-    //     githubPush()
-    
-
-    stages {
-        // stage('Checkout') {
-        //     steps {
-        //         // Checkout code from GitHub
-        //         git branch: 'main', url: 'https://github.com/tranhoanghatb/ansible_jenkins.git'
-        //     }
-        // }
-        
+    stages {       
         stage('Update Production Site') {
             steps {
                 // Run Ansible Playbook
