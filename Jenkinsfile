@@ -20,10 +20,17 @@ pipeline {
                 
             }
         }
-        stage('Clone to Dev Site') {
+        stage('Clone Production Site') {
             steps {
                 // Run Ansible Playbook
                 ansiblePlaybook become: true, becomeUser: 'root', credentialsId: 'administrator', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'clone_prod_site.yml'
+                
+            }
+        }
+        stage('Deploy to Dev Site') {
+            steps {
+                // Run Ansible Playbook
+                ansiblePlaybook become: true, becomeUser: 'root', credentialsId: 'administrator', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'deploy_dev_site.yml'
                 
             }
         }
