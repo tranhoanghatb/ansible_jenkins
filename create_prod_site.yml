@@ -41,6 +41,7 @@
           - "8080:80"
         volumes:
           - /var/lib/html:/usr/share/nginx/html
+        restart_policy: always
           
     - name: Set permissions on a folder
       file:
